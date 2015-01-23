@@ -25,13 +25,19 @@ import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.spi.TestContainer;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public abstract class AbstractJerseyTestCase extends TestCase {
 
 	private JerseyTest jerseyTest;
 
 	protected abstract Map<String, String> getInitParams();
 
+	@Before
 	@Override
 	public void setUp() {
 		//super.setUp();
@@ -46,6 +52,7 @@ public abstract class AbstractJerseyTestCase extends TestCase {
 		}
 	}
 
+	@After
 	@Override
 	public void tearDown() {
 		try {
@@ -115,6 +122,7 @@ public abstract class AbstractJerseyTestCase extends TestCase {
 							}
 						}
 
+						@SuppressWarnings("deprecation")
 						@Override
 						public void stop() {
 							this.server.stop();
