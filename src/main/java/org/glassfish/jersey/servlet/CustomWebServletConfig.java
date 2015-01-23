@@ -85,6 +85,7 @@ public class CustomWebServletConfig implements WebConfig {
 		return servlet.getInitParameter(name);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Enumeration getInitParameterNames() {
 		return servlet.getInitParameterNames();
