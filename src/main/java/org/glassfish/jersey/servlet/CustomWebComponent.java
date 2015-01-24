@@ -152,7 +152,6 @@ public class CustomWebComponent {
 		};
 	}
 
-	@SuppressWarnings("JavaDoc")
 	private static class HttpServletRequestReferencingFactory extends ReferencingFactory<HttpServletRequest> {
 		@Inject
 		public HttpServletRequestReferencingFactory(Provider<Ref<HttpServletRequest>> referenceFactory) {
@@ -160,7 +159,6 @@ public class CustomWebComponent {
 		}
 	}
 
-	@SuppressWarnings("JavaDoc")
 	private static class HttpServletResponseReferencingFactory extends ReferencingFactory<HttpServletResponse> {
 		@Inject
 		public HttpServletResponseReferencingFactory(Provider<Ref<HttpServletResponse>> referenceFactory) {
@@ -222,7 +220,8 @@ public class CustomWebComponent {
 				}).to(ServletConfig.class).in(Singleton.class);
 
 				// @PersistenceUnit
-				for (final Enumeration initParams = servletConfig.getInitParameterNames(); initParams.hasMoreElements();) {
+				for (@SuppressWarnings("rawtypes")
+				final Enumeration initParams = servletConfig.getInitParameterNames(); initParams.hasMoreElements();) {
 					final String initParamName = (String) initParams.nextElement();
 
 					if (initParamName.startsWith(PersistenceUnitBinder.PERSISTENCE_UNIT_PREFIX)) {
@@ -340,6 +339,7 @@ public class CustomWebComponent {
 	 * @throws javax.servlet.ServletException if the HTTP request cannot be
 	 *         handled.
 	 */
+	@SuppressWarnings("deprecation")
 	public Value<Integer> service(final URI baseUri, final URI requestUri, final HttpServletRequest servletRequest,
 			final HttpServletResponse servletResponse) throws ServletException, IOException {
 
@@ -484,7 +484,6 @@ public class CustomWebComponent {
 	 * @param request http servlet request to copy headers from.
 	 * @param requestContext container request to copy headers to.
 	 */
-	@SuppressWarnings("unchecked")
 	private void addRequestHeaders(HttpServletRequest request, ContainerRequest requestContext) {
 		for (Enumeration<String> names = request.getHeaderNames(); names.hasMoreElements();) {
 			String name = names.nextElement();
@@ -505,6 +504,7 @@ public class CustomWebComponent {
 	 */
 	private static Map<String, Object> getInitParams(WebConfig webConfig) {
 		Map<String, Object> props = new HashMap<String, Object>();
+		@SuppressWarnings("rawtypes")
 		Enumeration names = webConfig.getInitParameterNames();
 		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
@@ -521,6 +521,7 @@ public class CustomWebComponent {
 	 */
 	public static Map<String, Object> getContextParams(ServletContext servletContext) {
 		Map<String, Object> props = new HashMap<String, Object>();
+		@SuppressWarnings("rawtypes")
 		Enumeration names = servletContext.getAttributeNames();
 		while (names.hasMoreElements()) {
 			String name = (String) names.nextElement();
@@ -543,6 +544,7 @@ public class CustomWebComponent {
 	private void filterFormParameters(HttpServletRequest servletRequest, ContainerRequest containerRequest) {
 		if (MediaTypes.typeEqual(MediaType.APPLICATION_FORM_URLENCODED_TYPE, containerRequest.getMediaType()) && !containerRequest.hasEntity()) {
 			final Form form = new Form();
+			@SuppressWarnings("rawtypes")
 			final Enumeration parameterNames = servletRequest.getParameterNames();
 
 			while (parameterNames.hasMoreElements()) {

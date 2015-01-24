@@ -244,6 +244,7 @@ public class CustomServletContainer extends HttpServlet implements Filter, Conta
 	 * @throws ServletException if the HTTP request cannot be handled
 	 * @see javax.servlet.Servlet#service
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/**
