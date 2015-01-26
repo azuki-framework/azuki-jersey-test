@@ -4,7 +4,7 @@
 
 	<groupId>org.azkfw</groupId>
 	<artifactId>azuki-jersey-test</artifactId>
-	<version>0.0.1</version>
+	<version>1.4.4</version>
 	<packaging>jar</packaging>
 
 	<name>azuki-jersey-test</name>
@@ -36,6 +36,11 @@
 	</repositories>
 	
 	<dependencies>
+		<dependency>
+			<groupId>org.azkfw</groupId>
+			<artifactId>azuki-test</artifactId>
+			<version>1.4.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
@@ -88,11 +93,31 @@
 			<version>${jersey.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>			
-		</dependency>
-
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Built-By>AzukiFramework</Built-By>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

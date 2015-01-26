@@ -16,8 +16,9 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import junit.framework.TestCase;
-
+import org.azkfw.context.Context;
+import org.azkfw.test.AbstractPersistenceTestCase;
+import org.azkfw.test.context.TestContext;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.grizzly2.servlet.GrizzlyWebContainerFactory;
@@ -33,22 +34,21 @@ import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.spi.TestContainer;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public abstract class AbstractJerseyTestCase extends TestCase {
+public abstract class AbstractJerseyTestCase extends AbstractPersistenceTestCase {
 
 	private JerseyTest jerseyTest;
 
 	protected abstract Map<String, String> getInitParams();
 
-	@Before
+	@Override
+	protected Context getContext() {
+		return new TestContext("./src/main/webapp/WEB-INF/");
+	}
+
 	@Override
 	public void setUp() {
-		//super.setUp();
+		super.setUp();
 
 		//
 		this.jerseyTest = new CustomJerseyTest();
@@ -60,7 +60,6 @@ public abstract class AbstractJerseyTestCase extends TestCase {
 		}
 	}
 
-	@After
 	@Override
 	public void tearDown() {
 		try {
@@ -70,7 +69,7 @@ public abstract class AbstractJerseyTestCase extends TestCase {
 		}
 		//
 
-		//super.tearDown();
+		super.tearDown();
 	}
 
 	protected abstract List<Class<?>> getTestClasses();
