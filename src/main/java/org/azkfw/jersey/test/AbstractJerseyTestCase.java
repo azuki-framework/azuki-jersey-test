@@ -1,3 +1,20 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.azkfw.jersey.test;
 
 import java.io.File;
@@ -16,8 +33,8 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.azkfw.business.test.AbstractBusinessTestCase;
 import org.azkfw.context.Context;
-import org.azkfw.test.AbstractPersistenceTestCase;
 import org.azkfw.test.context.TestContext;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
@@ -35,7 +52,14 @@ import org.glassfish.jersey.test.spi.TestContainer;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
-public abstract class AbstractJerseyTestCase extends AbstractPersistenceTestCase {
+/**
+ * このクラスは、Jersey機能をサポートしたタスククラスです。
+ * 
+ * @since 1.0.0
+ * @version 1.0.0 2015/01/27
+ * @author Kawakicchi
+ */
+public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 
 	private JerseyTest jerseyTest;
 
@@ -50,9 +74,7 @@ public abstract class AbstractJerseyTestCase extends AbstractPersistenceTestCase
 	public void setUp() {
 		super.setUp();
 
-		//
 		this.jerseyTest = new CustomJerseyTest();
-
 		try {
 			this.jerseyTest.setUp();
 		} catch (Exception e) {
@@ -67,7 +89,6 @@ public abstract class AbstractJerseyTestCase extends AbstractPersistenceTestCase
 		} catch (Exception e) {
 			throw new RuntimeException("failed to tear down JerseyTest.", e);
 		}
-		//
 
 		super.tearDown();
 	}

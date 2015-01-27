@@ -38,7 +38,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.azkfw</groupId>
-			<artifactId>azuki-test</artifactId>
+			<artifactId>azuki-business-test</artifactId>
 			<version>1.4.4</version>
 		</dependency>
 
