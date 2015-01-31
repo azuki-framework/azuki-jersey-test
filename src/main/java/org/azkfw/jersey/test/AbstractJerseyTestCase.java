@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.LogManager;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Entity;
@@ -63,16 +64,15 @@ public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 
 	private JerseyTest jerseyTest;
 
-	protected abstract Map<String, String> getInitParams();
-
-	@Override
-	protected Context getContext() {
-		return new TestContext("./src/main/webapp/WEB-INF/");
-	}
-
 	@Override
 	public void setUp() {
 		super.setUp();
+
+		try {
+			LogManager.getLogManager().readConfiguration(getContext().getResourceAsStream("conf/logger.properties"));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
 		this.jerseyTest = new CustomJerseyTest();
 		try {
@@ -95,72 +95,15 @@ public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 
 	protected abstract List<Class<?>> getTestClasses();
 
-	private Set<Class<?>> getClasses() {
-		Set<Class<?>> classes = new HashSet<Class<?>>();
-		for (Class<?> api : getTestClasses()) {
-			classes.add(api);
-		}
-		return classes;
+	protected abstract Map<String, String> getInitParams();
+
+	@Override
+	protected Context getContext() {
+		return new TestContext("./src/main/webapp/WEB-INF/");
 	}
 
 	protected WebTarget target(final String aPath) {
 		return this.jerseyTest.target(aPath);
-	}
-
-	public class CustomJerseyTest extends JerseyTest {
-
-		@Override
-		protected Application configure() {
-			enable(TestProperties.LOG_TRAFFIC);
-			ResourceConfig rc = new ResourceConfig(getClasses());
-			return rc.registerClasses(MultiPartFeature.class);
-		}
-
-		@Override
-		protected void configureClient(final ClientConfig config) {
-			config.register(MultiPartFeature.class);
-		}
-
-		@Override
-		protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
-			return new TestContainerFactory() {
-				@Override
-				public TestContainer create(final URI baseUri, DeploymentContext deploymentContext) {
-					return new TestContainer() {
-						private HttpServer server;
-
-						@Override
-						public ClientConfig getClientConfig() {
-							return null;
-						}
-
-						@Override
-						public URI getBaseUri() {
-							return baseUri;
-						}
-
-						@Override
-						public void start() {
-							try {
-								this.server = GrizzlyWebContainerFactory.create(baseUri, CustomServletContainer.class, getInitParams());
-							} catch (ProcessingException e) {
-								throw new TestContainerException(e);
-							} catch (IOException e) {
-								throw new TestContainerException(e);
-							}
-						}
-
-						@SuppressWarnings("deprecation")
-						@Override
-						public void stop() {
-							this.server.stop();
-						}
-					};
-
-				}
-
-			};
-		}
 	}
 
 	/**
@@ -232,18 +175,6 @@ public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 	}
 
 	/**
-	 * POSTメソッド(JSON形式)
-	 * 
-	 * @param path パス
-	 * @param object パラメータ
-	 * @return レスポンス情報
-	 */
-	protected final Response postJson(final String path, final Object object) {
-		Entity<Object> entity = Entity.entity(object, MediaType.APPLICATION_JSON_TYPE);
-		return post(path, entity);
-	}
-
-	/**
 	 * POSTメソッド(MultiPart形式)
 	 * 
 	 * @param path パス
@@ -272,5 +203,89 @@ public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 		Entity<FormDataMultiPart> entity = Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA_TYPE);
 		Response response = target(path).request().header("Content-type", MediaType.MULTIPART_FORM_DATA).post(entity);
 		return response;
+	}
+
+	/**
+	 * POSTメソッド(JSON形式)
+	 * 
+	 * @param path パス
+	 * @param object パラメータ
+	 * @return レスポンス情報
+	 */
+	protected final Response postJson(final String path, final Object object) {
+		Entity<Object> entity = Entity.entity(object, MediaType.APPLICATION_JSON_TYPE);
+		return post(path, entity);
+	}
+
+	protected final <REQUEST, RESPONSE> RESPONSE postJson(final String path, final REQUEST req, final Class<RESPONSE> res) {
+		Entity<REQUEST> e = Entity.entity(req, MediaType.APPLICATION_JSON_TYPE);
+		Response response = post(path, e);
+		assertEquals("HTTPステータス", 200, response.getStatus());
+		RESPONSE r = response.readEntity(res);
+		return r;
+	}
+
+	private Set<Class<?>> getClasses() {
+		Set<Class<?>> classes = new HashSet<Class<?>>();
+		for (Class<?> api : getTestClasses()) {
+			classes.add(api);
+		}
+		return classes;
+	}
+
+	public class CustomJerseyTest extends JerseyTest {
+
+		@Override
+		protected Application configure() {
+			enable(TestProperties.LOG_TRAFFIC);
+			ResourceConfig rc = new ResourceConfig(getClasses());
+			return rc.registerClasses(MultiPartFeature.class);
+		}
+
+		@Override
+		protected void configureClient(final ClientConfig config) {
+			config.register(MultiPartFeature.class);
+		}
+
+		@Override
+		protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
+			return new TestContainerFactory() {
+				@Override
+				public TestContainer create(final URI baseUri, DeploymentContext deploymentContext) {
+					return new TestContainer() {
+						private HttpServer server;
+
+						@Override
+						public ClientConfig getClientConfig() {
+							return null;
+						}
+
+						@Override
+						public URI getBaseUri() {
+							return baseUri;
+						}
+
+						@Override
+						public void start() {
+							try {
+								this.server = GrizzlyWebContainerFactory.create(baseUri, CustomServletContainer.class, getInitParams());
+							} catch (ProcessingException e) {
+								throw new TestContainerException(e);
+							} catch (IOException e) {
+								throw new TestContainerException(e);
+							}
+						}
+
+						@SuppressWarnings("deprecation")
+						@Override
+						public void stop() {
+							this.server.stop();
+						}
+					};
+
+				}
+
+			};
+		}
 	}
 }
