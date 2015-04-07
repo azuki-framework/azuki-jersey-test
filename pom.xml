@@ -38,6 +38,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.azkfw</groupId>
+			<artifactId>azuki-jersey</artifactId>
+			<version>1.4.5</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.azkfw</groupId>
 			<artifactId>azuki-business-test</artifactId>
 			<version>1.4.5</version>
 		</dependency>
