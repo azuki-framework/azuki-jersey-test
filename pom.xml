@@ -4,7 +4,7 @@
 
 	<groupId>org.azkfw</groupId>
 	<artifactId>azuki-jersey-test</artifactId>
-	<version>1.4.5-SNAPSHOT</version>
+	<version>1.4.5</version>
 	<packaging>jar</packaging>
 
 	<name>azuki-jersey-test</name>
