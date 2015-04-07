@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import org.azkfw.business.test.AbstractBusinessTestCase;
 import org.azkfw.context.Context;
 import org.azkfw.test.context.TestContext;
+import org.azkfw.util.StringUtility;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.grizzly2.servlet.GrizzlyWebContainerFactory;
@@ -62,16 +63,24 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
  */
 public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 
+	/** Jerseyテスト */
 	private JerseyTest jerseyTest;
+
+	protected String getJerseyLoggerFile() {
+		return "conf/logger.properties";
+	}
 
 	@Override
 	public void setUp() {
 		super.setUp();
 
-		try {
-			LogManager.getLogManager().readConfiguration(getContext().getResourceAsStream("conf/logger.properties"));
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		String loggerFile = getJerseyLoggerFile();
+		if (StringUtility.isNotEmpty(loggerFile)) {
+			try {
+				LogManager.getLogManager().readConfiguration(getContext().getResourceAsStream(loggerFile));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 
 		this.jerseyTest = new CustomJerseyTest();
@@ -182,7 +191,7 @@ public abstract class AbstractJerseyTestCase extends AbstractBusinessTestCase {
 	 * @return 結果
 	 * @throws IOException
 	 */
-	protected final Response postMultiPart(final String path, final Map<String, Object> params) throws IOException {
+	protected final Response postMultiPart(final String path, final Map<String, Object> params) {
 		FormDataMultiPart multiPart = new FormDataMultiPart();
 		if (null != params) {
 			for (String key : params.keySet()) {
